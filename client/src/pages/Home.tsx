@@ -1,10 +1,13 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import { RoomContext } from '../context/RoomContext'
 
 const Home = () => {
     const {ws} = useContext(RoomContext);
+    const createMeeting = () => {
+        ws.emit("create-meeting", {name: "User"})
+    }
   return (
-    <div><button>Create meeting</button></div>
+    <div><button onClick={createMeeting}>Create meeting</button></div>
   )
 }
 

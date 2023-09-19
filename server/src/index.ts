@@ -15,7 +15,11 @@ const io = new Server(server, {
 })
 
 io.on("connection", (socket) => {
-    console.log("user connected");
+    console.log("user connected");  
+
+    socket.on("create-meeting", (data) => {
+        console.log("meeting created", data);
+    })
 
     socket.on("disconnect", () => {
         console.log("user disconnected")
