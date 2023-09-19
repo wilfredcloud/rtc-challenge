@@ -2,18 +2,32 @@ import express from "express";
 import  http from "http"
 import {Server} from "socket.io"
 import cors from "cors"
+import { PORT } from "./utils/constants";
+import authRouter from "./controllers/AuthController";
+import roomRoutes from "./controllers/RoomController";
+import notFoundHandler from "./utils/Route404";
 
 const app = express();
-const PORT = 5000;
-app.use(cors)
 const server = http.createServer(app)
-const io = new Server(server, {
-    cors:{
-        origin: "*",
-        methods: ["GET", "POST"]
-    }
-})
 
+const corsOption = {
+    origin: "*",
+    methods: ["GET", "POST"]
+}
+const io = new Server(server, {
+    cors: corsOption
+})
+app.use(cors(corsOption))
+
+
+
+// HTTP Routes handling
+app.use("/auth", authRouter)
+app.use("/rooms", roomRoutes)
+app.all("*", notFoundHandler)
+
+
+// WebSocket Event handling
 io.on("connection", (socket) => {
     console.log("user connected");  
 
@@ -25,6 +39,8 @@ io.on("connection", (socket) => {
         console.log("user disconnected")
     })
 })
+
+
 
 server.listen(PORT, () => {
     console.log(`server running on port ${PORT}`)
