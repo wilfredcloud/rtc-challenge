@@ -1,14 +1,11 @@
-import { io } from "socket.io-client";
+import { Route, Routes } from "react-router-dom";
+import Home from "./pages/Home";
 function App() {
-  const SERVER_URL = process.env.REACT_APP_SERVER_BASE_URL as string
-  const createMeeting = () => {
-    const ws = io(SERVER_URL);
-  }
   return (
-    <div className="App">
-     <button onClick={createMeeting}>Create meeting</button>
-    </div>
-  );
+      <Routes>
+        <Route path="/" element={<Home/>}/>
+      </Routes>
+    );
 }
 
 export default App;
