@@ -1,6 +1,7 @@
 import { useContext } from 'react'
 import { RoomContext } from '../context/RoomContext'
 import { AuthContext } from '../context/AuthContext';
+import Navbar from '../components/Navbar';
 
 const Home = () => {
     const {user} = useContext(AuthContext);
@@ -11,6 +12,7 @@ const Home = () => {
     }
   return (
     <div>
+       <Navbar/>
         <h1>Welcome to ZarTech Video Conferencings</h1>
 
         <div><button onClick={createMeeting}>Start a meeting</button> <input placeholder='Enter meeting link'/> <button>Join </button></div>

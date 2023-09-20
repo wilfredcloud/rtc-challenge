@@ -1,10 +1,10 @@
 import { Router } from "express";
 import Joi from "joi";
-import { createNewAccount, signIn } from "../services/AuthService";
+import { signUp, signIn } from "../services/AuthService";
 
 const authRouter = Router()
 
-authRouter.post('/signup', async (req, res, next) => {
+authRouter.post('/signup', async (req, res) => {
 
     const signupSchema = Joi.object({
         name: Joi.string().required().max(200),
@@ -14,20 +14,20 @@ authRouter.post('/signup', async (req, res, next) => {
 
     const {error, value} = signupSchema.validate(req.body);
     if (error) {
-        res.status(403).send(error.details);
+        res.status(400).send(error.details);
     }else{
        try {
-        const result = await createNewAccount(value);
+        const result = await signUp(value);
         res.send(result)
        } catch (error) {
-        next(error)
+        throw(error)
        }
     }
 
 })
 
 
-authRouter.post("/signin", async (req, res, next) => {
+authRouter.post("/signin", async (req, res) => {
     const signinSchema = Joi.object({
         email: Joi.string().required().email().max(100),
         password: Joi.string().max(16).min(4)
@@ -36,13 +36,13 @@ authRouter.post("/signin", async (req, res, next) => {
     const {error, value} = signinSchema.validate(req.body);
 
     if (error) {
-        res.status(403).send(error.details);
+        res.status(400).send(error.details);
     }else{
        try {
         const result = await signIn(value);
         res.send(result)
        } catch (error) {
-        next(error)
+        throw(error)
        }
     }
 })

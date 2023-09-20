@@ -7,7 +7,7 @@ import { SignInData, SignUpData, User } from "src/utils/types";
 
 
 
-export const createNewAccount = async (data: SignUpData): Promise<User | null> => {
+export const signUp = async (data: SignUpData): Promise<User | null> => {
     try {
         const db = DataProvider.getDatabaseInstance()
         const { name, email, password } = data;
@@ -36,7 +36,7 @@ export const createNewAccount = async (data: SignUpData): Promise<User | null> =
             }, process.env.JWT_SECRET || "invalid_hash")
         }
     } catch (error) {
-        console.log("createNewAccount", error)
+        console.log("signUp", error)
         throw error
     }
 }
@@ -64,12 +64,12 @@ export const signIn = async (data: SignInData): Promise<User | null> => {
                         email: user.email
                     }, process.env.JWT_SECRET || "invalid_hash")
                 }
-            }else {
-            return null;
+            } else {
+                return null;
+            }
         }
-    }
     } catch (error) {
-    console.log("signIn", error)
-    throw error
-}
+        console.log("signIn", error)
+        throw error
+    }
 }

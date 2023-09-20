@@ -18,8 +18,7 @@ const io = new Server(server, {
     cors: corsOption
 })
 app.use(cors(corsOption))
-
-
+app.use(express.json())
 
 // HTTP Routes handling
 app.use("/auth", authRouter)
