@@ -6,7 +6,7 @@ import { Room as RoomValue } from '../utils/types';
 import { getRoomById, getUserRooms,  } from '../utils/helpers';
 import Navbar from '../components/Navbar';
 import { RoomContext } from '../context/RoomContext';
-import { socketEvents as SE} from '../utils/constants';
+import { SOCKETEVENTS as SE} from '../utils/constants';
 
 const Room = () => {
   const {user} = useContext(AuthContext);
@@ -60,7 +60,8 @@ const Room = () => {
       roomId,
       userId: user.data.id,
     }
-    ws.emit(SE.startRoomSession, data)
+    ws.emit(SE.startRoomSession, data);
+
   } 
 
 

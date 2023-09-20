@@ -8,7 +8,12 @@ export interface User {
 }
 
 export interface Room {
-    id: string
+    id: string;
     name: string;
     userId: string;
+}
+
+export interface Session {
+    id: string
+    roomId: string;
 }

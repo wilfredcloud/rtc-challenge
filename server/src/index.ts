@@ -6,7 +6,7 @@ import { PORT } from "./utils/constants";
 import authRouter from "./controllers/AuthController";
 import roomRoutes from "./controllers/RoomController";
 import notFoundHandler from "./utils/Route404";
-import { roomHandler } from "./room";
+import { roomHandler } from "./room/handler";
 
 const app = express();
 const server = http.createServer(app)

@@ -1,13 +1,15 @@
 import DataProvider from "../utils/DataProviders"
-import { CreateSessionData } from "../utils/types";
 
 
-export const createRoomSession = (data: CreateSessionData ) => {
+export const createRoomSession = async (roomId: string) => {
     try {
         const db = DataProvider.getDatabaseInstance();
-        const session = db.session.create({
-            data: data
+        const session = await db.session.create({
+            data: {
+                roomId
+            }
         });
+        console.log(session);
         return session;
     } catch (error) {
         console.log(error);

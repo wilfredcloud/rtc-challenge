@@ -1,6 +1,8 @@
-import { ReactNode, createContext } from "react";
+import { ReactNode, createContext, useEffect } from "react";
 import socketIOClient, { Socket } from "socket.io-client"
-import { SERVER_BASE_URL } from "../utils/constants";
+import { SERVER_BASE_URL, SOCKETEVENTS as SE } from "../utils/constants";
+import { Session } from "../utils/types";
+import { useNavigate } from "react-router-dom";
 
 interface RoomContextValue {
     ws: Socket,
@@ -17,6 +19,14 @@ interface RoomProviderProps {
     children: ReactNode
 }
 const RoomProvider:React.FC<RoomProviderProps> = ({children}) => {
+    const navigate = useNavigate()
+    const enterRoomSession = (session: Session) => {
+        navigate(`/${session.roomId}/join?session=${session.id}`);
+    }
+    useEffect(() => {
+        ws.on(SE.roomSessionStarted, enterRoomSession)
+    }, []);
+
     return <RoomContext.Provider value={{ws}}>
     {children}
     </RoomContext.Provider>
