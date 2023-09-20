@@ -6,6 +6,7 @@ import { PORT } from "./utils/constants";
 import authRouter from "./controllers/AuthController";
 import roomRoutes from "./controllers/RoomController";
 import notFoundHandler from "./utils/Route404";
+import { roomHandler } from "./room";
 
 const app = express();
 const server = http.createServer(app)
@@ -30,10 +31,7 @@ app.all("*", notFoundHandler)
 io.on("connection", (socket) => {
     console.log("user connected");  
 
-    socket.on("create-meeting", (data) => {
-        console.log("meeting created", data);
-    })
-
+    roomHandler(socket);
     socket.on("disconnect", () => {
         console.log("user disconnected")
     })

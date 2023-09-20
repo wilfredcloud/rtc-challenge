@@ -18,4 +18,8 @@ export interface User {
     token: string
 }
 
+export interface CreateSessionData {
+    userId: string,
+    roomId: string
+}
 

@@ -1,15 +1,21 @@
 import { ReactNode, createContext } from "react";
-import socketIOClient from "socket.io-client"
-import { SERVER_BASE_URL } from "../utils/data";
+import socketIOClient, { Socket } from "socket.io-client"
+import { SERVER_BASE_URL } from "../utils/constants";
 
-export const RoomContext = createContext<any>(null);
-const ws = socketIOClient(SERVER_BASE_URL)
+interface RoomContextValue {
+    ws: Socket,
+}
+const ws: Socket = socketIOClient(SERVER_BASE_URL)
+
+export const RoomContext = createContext<RoomContextValue>({
+    ws: ws
+});
+
+
 
 interface RoomProviderProps {
     children: ReactNode
 }
-
-
 const RoomProvider:React.FC<RoomProviderProps> = ({children}) => {
     return <RoomContext.Provider value={{ws}}>
     {children}
