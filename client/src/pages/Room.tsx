@@ -11,7 +11,11 @@ const Room = () => {
   const {roomId} = useParams();
   const [room, setRoom] = useState<RoomValue>()
   const [userRooms, setUserRooms] = useState<RoomValue[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
+  const [isCopied, setIsCopied] = useState(false);
+  const baseUrl = window.location.origin;
+  const invitLink =  `${baseUrl}/${room?.id}`;
+ 
 
   useEffect(()=> {
     const getRooms = async () => {
@@ -34,12 +38,31 @@ const Room = () => {
     getRooms();
   }, [roomId, user])
 
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(invitLink);
+      setIsCopied(true);
+
+      setTimeout(()=> {
+        setIsCopied(false);
+      }, 2000)
+    } catch (error) {
+      console.log("Unable to copy", error)
+    }
+  }
   if (loading) {
     return <h6>Loading</h6>
+  }
+  if (!loading && !room) {
+    return <>Invalid room</>
   }
   return (
     <div>
       <Navbar/>
+      <h1>{room?.name}</h1>
+      <p>Invite participant</p>
+      <input readOnly value={invitLink}/> <button onClick={handleCopy}>{isCopied ? 'Copied' : 'Copy'}</button>
+
     </div>
   )
 }
