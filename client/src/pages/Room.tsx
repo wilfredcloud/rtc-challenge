@@ -125,7 +125,7 @@ const Room = () => {
       <div className='room-grid'>
       {userRooms.map((room) => <Link className='room-item' key={room.id} to={`/${room.id}`}><div>{room.name}</div></Link>)}
       </div>
-          <button>Create a Room</button>
+          <Link to={"/newroom"}><button>Create a Room</button></Link>
       </div>
     </div>
   )
