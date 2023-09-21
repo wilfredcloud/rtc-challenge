@@ -16,7 +16,6 @@ export const roomHandler = (socket: Socket) => {
     console.log("startSession")
     const session = await createRoomSession(roomId)
     activeRooms[roomId] = [];
-    console.log('roomSessionStarted')
     socket.emit(SE.roomSessionStarted, session)
   }
 
@@ -35,11 +34,6 @@ export const roomHandler = (socket: Socket) => {
         activeRooms[roomId].push(peerId);
       };
       socket.join(roomId);
-      console.log("join")
-      // socket.on("ready", () => {
-      //   console.log("just got ready");
-      //   socket.to(roomId).emit(SE.peerJoined, { peerId })
-      // })
       socket.to(roomId).emit(SE.peerJoined, { peerId })
       socket.emit(SE.roomSessionJoined, { roomId, participants: activeRooms[roomId] })
       socket.on(SE.disconnect, () => {

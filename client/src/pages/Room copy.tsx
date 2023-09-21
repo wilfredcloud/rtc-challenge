@@ -10,10 +10,11 @@ import { RoomContext } from '../context/RoomContext';
 import { SOCKETEVENTS as SE } from '../utils/constants';
 import VideoPlayer from '../components/VideoPlayer';
 import PreviewVideoPlayer from '../components/PreviewVideoPlayer';
+import Peer from 'peerjs';
 
 const Room = () => {
   const { user } = useContext(AuthContext);
-  const { ws, stream, setStream } = useContext(RoomContext);
+  const { ws, stream, setStream, setUserPeer } = useContext(RoomContext);
   const { roomId } = useParams();
   const [room, setRoom] = useState<RoomValue>()
   const [loading, setLoading] = useState(true);
@@ -56,6 +57,7 @@ const Room = () => {
 
   const startMeeting = () => {
     if (!user) return;
+  
     const data = {
       roomId,
       userId: user.data.id,

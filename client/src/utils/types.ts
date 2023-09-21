@@ -17,3 +17,10 @@ export interface Session {
     id: string
     roomId: string;
 }
+
+export interface Participant {
+    peerId: string
+    name: string;
+    isRoomOwner?: boolean;
+}
+

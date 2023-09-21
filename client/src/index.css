@@ -4,7 +4,7 @@ body{
 }
 
 .conference-room{
-    background-color: gray;
+    background-color: rgb(18, 14, 43);
     height: 100vh;
     overflow: hidden;
     display: flex;
@@ -15,7 +15,7 @@ body{
 
 .participants-section {
     width: 200px;
-    background-color: aliceblue;
+    background-color: #d6e5f1;
     padding: 10px;
 }
 

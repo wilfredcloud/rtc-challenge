@@ -1,4 +1,4 @@
-import  { useContext, useEffect, useState } from 'react'
+import  { ChangeEvent, useContext, useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { AuthContext } from '../context/AuthContext'
@@ -7,6 +7,8 @@ import { getRoomById, getUserRooms,  } from '../utils/helpers';
 import Navbar from '../components/Navbar';
 import { RoomContext } from '../context/RoomContext';
 import { SOCKETEVENTS as SE} from '../utils/constants';
+import Peer from 'peerjs';
+import Participants from '../components/Participants';
 
 const Room = () => {
   const {user} = useContext(AuthContext);
@@ -19,6 +21,7 @@ const Room = () => {
   const baseUrl = window.location.origin;
   const invitLink =  `${baseUrl}/${room?.id}`;
   const navigate = useNavigate();
+  const [inviteeName, setInviteeName] = useState(user?.data.name || "")
 
  
 
@@ -56,10 +59,14 @@ const Room = () => {
     }
   }
 
+  const handleNameChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    setInviteeName(e.target.value)
+  }
 
 
   const startMeeting = () => {
     if (!user) return;
+    localStorage.setItem("participantName", user.data.name)
     const data = {
       roomId,
       userId: user.data.id,
@@ -68,6 +75,8 @@ const Room = () => {
 
   }
   const joinMeeting = () => {
+    if (inviteeName.trim() === "") return;
+    localStorage.setItem("participantName", inviteeName)
     navigate(`/${roomId}/join`)
   }
 
@@ -83,8 +92,8 @@ const Room = () => {
       <div>
         <Navbar />
         <h1>{room?.name}</h1>
-        <p>Your name</p>
-        <input placeholder='Fullname' /> <button onClick={joinMeeting}>Join</button>
+        <p>Name *</p>
+        <input placeholder='Enter your name ' onChange={handleNameChange} value={inviteeName} /> <button onClick={joinMeeting}>Join</button>
         <br />
 
       </div>
