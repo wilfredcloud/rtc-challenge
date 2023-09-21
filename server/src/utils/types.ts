@@ -18,4 +18,10 @@ export interface User {
     token: string
 }
 
+export interface Participant {
+    peerId: string
+    name: string;
+    isRoomOwner?: boolean;
+}
+
 

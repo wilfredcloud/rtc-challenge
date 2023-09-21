@@ -1,13 +1,14 @@
 import { Socket } from "socket.io";
 import { SOCKETEVENTS as SE } from "../utils/constants";
 import { createRoomSession } from "../services/SessionService";
+import { Participant } from "src/utils/types";
 
 
-const activeRooms: Record<string, string[]> = {}
+const activeRooms: Record<string, Participant[]> = {}
 
-interface PeerSessionData {
+interface ParticipantSessionData {
   roomId: string,
-  peerId: string
+  participant: Participant
 }
 export const roomHandler = (socket: Socket) => {
 
@@ -19,25 +20,25 @@ export const roomHandler = (socket: Socket) => {
     socket.emit(SE.roomSessionStarted, session)
   }
 
-  const leaveSession = ({ roomId, peerId }: PeerSessionData) => {
+  const leaveSession = ({ roomId, participant }: ParticipantSessionData) => {
     console.log("leaveSession")
 
-    activeRooms[roomId] = activeRooms[roomId].filter((id) => id !== peerId);
+    activeRooms[roomId] = activeRooms[roomId].filter((pt) => pt.peerId !== participant.peerId);
     console.log("Emit, peerDisconnected")
-    socket.to(roomId).emit(SE.peerDisconnected, { roomId, peerId })
+    socket.to(roomId).emit(SE.peerDisconnected, { roomId, participant })
   }
 
-  const joinSession = async ({ roomId, peerId }: PeerSessionData) => {
+  const joinSession = async ({ roomId, participant }: ParticipantSessionData) => {
     if (activeRooms[roomId]) {
 
-      if (!activeRooms[roomId].find((id) => id === peerId)) {
-        activeRooms[roomId].push(peerId);
+      if (!activeRooms[roomId].find((pt) => pt.peerId === participant.peerId)) {
+        activeRooms[roomId].push(participant);
       };
       socket.join(roomId);
-      socket.to(roomId).emit(SE.peerJoined, { peerId })
+      socket.to(roomId).emit(SE.peerJoined, { participant })
       socket.emit(SE.roomSessionJoined, { roomId, participants: activeRooms[roomId] })
       socket.on(SE.disconnect, () => {
-        leaveSession({ roomId, peerId })
+        leaveSession({ roomId, participant })
       })
 
     }
