@@ -92,6 +92,7 @@ const RoomSession = () => {
 
 
     ws.on(SE.peerJoined, ({ peerId }) => {
+      console.log("peer joinedS")
       const call = userPeer.call(peerId, stream);
       call.on("stream", (peerStream) => {
         dispatchPeers(addPeerAction(peerId, peerStream))

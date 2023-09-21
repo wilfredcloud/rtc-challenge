@@ -59,8 +59,9 @@ const RoomProvider: React.FC<RoomProviderProps> = ({ children }) => {
 
 
 
-    useEffect(() => { 
-        const peer = new Peer();
+    useEffect(() => {
+        const unid = uuidV4();
+        const peer = new Peer(unid);
         setUserPeer(peer);
         ws.on(SE.roomSessionStarted, enterRoomSession)
         ws.on(SE.roomSessionJoined, getParticipants)
