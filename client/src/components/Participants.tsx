@@ -1,12 +1,14 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import { RoomContext } from '../context/RoomContext'
 
 const Participants = () => {
+  const {participants} = useContext(RoomContext);
   return (
     <div className="participants-section">
     <div className='section-title'>Participants</div>
     <div className='participants-list'>
-        {[1,2,35].map((item) =><div className='participant'>
-          participant {item}
+        {participants.map((pt) =><div className='participant'>
+        { pt.name}
         </div>)}
     </div>
   </div>

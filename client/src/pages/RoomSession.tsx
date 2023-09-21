@@ -14,7 +14,7 @@ import { Participant } from '../utils/types';
 
 const RoomSession = () => {
   const { user, } = useContext(AuthContext);
-  const { ws, userPeer, stream, peers, setStream, dispatchPeers } = useContext(RoomContext);
+  const { ws, userPeer, stream, peers, participants, setStream, dispatchPeers } = useContext(RoomContext);
 
   const { roomId } = useParams()
   const navigate = useNavigate()

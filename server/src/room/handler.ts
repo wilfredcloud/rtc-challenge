@@ -44,8 +44,13 @@ export const roomHandler = (socket: Socket) => {
     }
   }
 
+  const checkRoomInSession = ({roomId}: {roomId: string}) => {
+      const roomState = Object.keys(activeRooms).includes(roomId);
+      socket.emit(SE.roomSessionState, {roomState})
+  }
 
 
+  socket.on(SE.isRoomInSession, checkRoomInSession)
   socket.on(SE.startRoomSession, startSession)
   socket.on(SE.joinRoomSession, joinSession);
 

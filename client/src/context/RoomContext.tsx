@@ -48,20 +48,15 @@ const RoomProvider: React.FC<RoomProviderProps> = ({ children }) => {
     const enterRoomSession = (session: Session) => {
         navigate(`/${session.roomId}/join?session=${session.id}`);
     }
-    const getParticipants = ({ roomId, participants }: { roomId: string, participants: string[] }) => {
+    const getParticipants = ({ roomId, participants }: { roomId: string, participants: Participant[] }) => {
        console.log("participants",participants)
+       setParticipants(participants);
     }
-    const removePeer = ({peerId}: {peerId: string}) => {
+    const removePeer = ({participant}: {participant: Participant}) => {
         console.log("removed");
-        dispatchPeers(removePeerAction(peerId))
+        dispatchPeers(removePeerAction(participant.peerId))
     }
 
-    const callPeer = ({peerId, peer}: {peerId: string, peer: Peer}) => {
-        const call = peer.call(peerId, stream as MediaStream);
-        call.on("stream", (peerStream) => {
-          dispatchPeers(addPeerAction(peerId, peerStream))
-        })
-    };
 
 
     useEffect(() => { 
@@ -72,12 +67,6 @@ const RoomProvider: React.FC<RoomProviderProps> = ({ children }) => {
         ws.on(SE.peerDisconnected, removePeer)
     }, []);
 
-    // useEffect(() => {
-        
-    //     if (!userPeer || !stream) return;
- 
-    
-    // }, [userPeer, stream])
 
     return <RoomContext.Provider value={{ ws, userPeer, stream, peers,participants, setParticipants, setUserPeer, setStream, dispatchPeers }}>
         {children}

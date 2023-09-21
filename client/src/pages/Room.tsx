@@ -18,12 +18,15 @@ const Room = () => {
   const [userRooms, setUserRooms] = useState<RoomValue[]>([])
   const [loading, setLoading] = useState(true);
   const [isCopied, setIsCopied] = useState(false);
+  const [isRoomInSession, setIsRoomInSession ] = useState(false);
   const baseUrl = window.location.origin;
   const invitLink =  `${baseUrl}/${room?.id}`;
   const navigate = useNavigate();
   const [inviteeName, setInviteeName] = useState(user?.data.name || "")
 
- 
+  const handleRoomSessionState = ({roomState}: {roomState:boolean}) => { 
+      setIsRoomInSession(roomState);
+  }
 
   useEffect(()=> {
     const getRooms = async () => {
@@ -42,8 +45,11 @@ const Room = () => {
       }
       
     }
-
     getRooms();
+
+    ws.emit(SE.isRoomInSession, {roomId})
+    ws.on(SE.roomSessionState, handleRoomSessionState)
+
   }, [roomId, user])
 
   const handleCopy = async () => {
@@ -80,6 +86,8 @@ const Room = () => {
     navigate(`/${roomId}/join`)
   }
 
+
+
   if (loading) {
     return <h6>Loading</h6>
   }
@@ -107,7 +115,8 @@ const Room = () => {
       <p>Invite participant</p>
       <input readOnly value={invitLink}/> <button onClick={handleCopy}>{isCopied ? 'Copied' : 'Copy'}</button>
       <br />
-      <button onClick={startMeeting}>Start Meeting</button>
+
+      <button onClick={isRoomInSession? joinMeeting : startMeeting}> {isRoomInSession? 'Join Meeting' : 'Start Meeting' }</button>
 
       <h5>Rooms</h5>
       <hr />
