@@ -47,8 +47,17 @@ const RoomProvider: React.FC<RoomProviderProps> = ({ children }) => {
        console.log("participannts",participants)
     }
     const removePeer = ({peerId}: {peerId: string}) => {
+        console.log("removed");
         dispatchPeers(removePeerAction(peerId))
     }
+
+    const callPeer = ({peerId, peer}: {peerId: string, peer: Peer}) => {
+        const call = peer.call(peerId, stream as MediaStream);
+        call.on("stream", (peerStream) => {
+          dispatchPeers(addPeerAction(peerId, peerStream))
+        })
+    };
+
 
     useEffect(() => {
         const unid = uuidV4();
@@ -57,6 +66,7 @@ const RoomProvider: React.FC<RoomProviderProps> = ({ children }) => {
         
         ws.on(SE.roomSessionStarted, enterRoomSession)
         ws.on(SE.roomSessionJoined, getParticipants)
+  
         ws.on(SE.peerDisconnected, removePeer)
     }, []);
 

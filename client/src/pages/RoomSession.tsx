@@ -41,39 +41,35 @@ const RoomSession = () => {
   }
 
   useEffect(() => {
-    if (!userPeer) return;
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        setStream(stream);
-        ws.emit(SE.joinRoomSession, { roomId, peerId: userPeer.id })
+    if(!userPeer || !stream) {
+      navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+      .then((stream) => setStream(stream))
+      .catch((error) => console.log("error"))
 
-        ws.on(SE.peerJoined, ({ peerId }) => {
-          // initiate call
-          console.log("got peer streem");
-
-
-          const call = userPeer.call(peerId, stream);
-          call.on("stream", (peerStream) => {
-            dispatchPeers(addPeerAction(peerId, peerStream))
-          })
-        });
+    }
+    if (!userPeer || !stream) return;
+    ws.emit(SE.joinRoomSession, { roomId, peerId: userPeer.id  })
 
 
-        //    answering call
-        userPeer.on("call", (call) => {
-          console.log("I was called");
-          call.answer(stream);
-          call.on("stream", (peerStream) => {
-            dispatchPeers(addPeerAction(call.peer, peerStream))
-          })
-        })
-        ws.emit('ready')
+    ws.on(SE.peerJoined, ({peerId}) => {
+      const call = userPeer.call(peerId, stream);
+      call.on("stream", (peerStream) => {
+        dispatchPeers(addPeerAction(peerId, peerStream))
+      })
+  })
 
-      });
+    userPeer.on("call", (call) => {
+      console.log("I was called");
+      call.answer(stream);
+      call.on("stream", (peerStream) => {
+        dispatchPeers(addPeerAction(call.peer, peerStream))
+      })
+    })
 
 
+  }, [userPeer, stream])
 
-  }, [userPeer])
+  
 
 
 

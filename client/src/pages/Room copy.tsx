@@ -1,52 +1,52 @@
-import  { useContext, useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom';
+import { useContext, useEffect, useState } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { v4 as uuidV4 } from 'uuid';
 
 import { AuthContext } from '../context/AuthContext'
 import { Room as RoomValue } from '../utils/types';
-import { getRoomById, getUserRooms,  } from '../utils/helpers';
+import { getRoomById, getUserRooms, } from '../utils/helpers';
 import Navbar from '../components/Navbar';
 import { RoomContext } from '../context/RoomContext';
-import { SOCKETEVENTS as SE} from '../utils/constants';
+import { SOCKETEVENTS as SE } from '../utils/constants';
+import VideoPlayer from '../components/VideoPlayer';
+import PreviewVideoPlayer from '../components/PreviewVideoPlayer';
 
-const Dashboard = () => {
-  const {user} = useContext(AuthContext);
-  const {ws} = useContext(RoomContext);
-  const {roomId} = useParams();
+const Room = () => {
+  const { user } = useContext(AuthContext);
+  const { ws, stream, setStream } = useContext(RoomContext);
+  const { roomId } = useParams();
   const [room, setRoom] = useState<RoomValue>()
-  const [userRooms, setUserRooms] = useState<RoomValue[]>([])
   const [loading, setLoading] = useState(true);
   const [isCopied, setIsCopied] = useState(false);
   const baseUrl = window.location.origin;
-  const invitLink =  `${baseUrl}/${room?.id}`;
- 
+  const invitLink = `${baseUrl}/${room?.id}`;
+  const navigate = useNavigate();
 
-  useEffect(()=> {
+
+
+  useEffect(() => {
     const getRooms = async () => {
       try {
         const room = await getRoomById(roomId as string);
         setRoom(room);
-
-        if(user) {
-          const userRooms = await getUserRooms(user.data.id);
-          setUserRooms(userRooms);
-        }
       } catch (error) {
         console.log("Something went wrong");
-      }finally{
+      } finally {
         setLoading(false);
       }
-      
+
     }
 
     getRooms();
   }, [roomId, user])
+
 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(invitLink);
       setIsCopied(true);
 
-      setTimeout(()=> {
+      setTimeout(() => {
         setIsCopied(false);
       }, 2000)
     } catch (error) {
@@ -60,9 +60,15 @@ const Dashboard = () => {
       roomId,
       userId: user.data.id,
     }
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => setStream(stream))
+
     ws.emit(SE.startRoomSession, data);
 
-  } 
+  }
+  const joinMeeting = () => {
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => setStream(stream))
+    navigate(`/${roomId}/join`)
+  }
 
 
   if (loading) {
@@ -71,21 +77,19 @@ const Dashboard = () => {
   if (!loading && !room) {
     return <>Invalid room</>
   }
+
+
   return (
     <div>
-      <Navbar/>
+      <Navbar />
       <h1>{room?.name}</h1>
       <p>Invite participant</p>
-      <input readOnly value={invitLink}/> <button onClick={handleCopy}>{isCopied ? 'Copied' : 'Copy'}</button>
+      <input readOnly value={invitLink} /> <button onClick={handleCopy}>{isCopied ? 'Copied' : 'Copy'}</button>
       <br />
       <button onClick={startMeeting}>Start Meeting</button>
-
-      <h5>Rooms</h5>
-      <hr />
-      {userRooms.map((room) => <Link key={room.id} to={`/${room.id}`}><div>{room.name}</div></Link>)}
-          <button>Create a Room</button>
+   
     </div>
   )
 }
 
-export default Dashboard
+export default Room

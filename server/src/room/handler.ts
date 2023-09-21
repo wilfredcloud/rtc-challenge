@@ -25,7 +25,7 @@ export const roomHandler = (socket: Socket) => {
 
     activeRooms[roomId] = activeRooms[roomId].filter((id) => id !== peerId);
     console.log("Emit, peerDisconnected")
-    socket.emit(SE.peerDisconnected, { roomId, peerId })
+    socket.to(roomId).emit(SE.peerDisconnected, { roomId, peerId })
   }
 
   const joinSession = async ({ roomId, peerId }: PeerSessionData) => {
