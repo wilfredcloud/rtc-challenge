@@ -35,8 +35,9 @@ export const roomHandler = (socket: Socket) => {
         activeRooms[roomId].push(participant);
       };
       socket.join(roomId);
-      socket.to(roomId).emit(SE.peerJoined, { participant })
+      socket.to(roomId).emit(SE.peerJoined,  {participant})
       socket.emit(SE.roomSessionJoined, { roomId, participants: activeRooms[roomId] })
+      socket.to(roomId).emit(SE.roomSessionJoined, { roomId, participants: activeRooms[roomId] })
       socket.on(SE.disconnect, () => {
         
         leaveSession({ roomId, participant })

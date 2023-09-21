@@ -13,59 +13,71 @@ interface FormValues {
     email: string;
     password: string;
 }
-  
+
 const SignUp = () => {
-    const {setUser} = useContext(AuthContext);
+    const { setUser } = useContext(AuthContext);
     const navigate = useNavigate()
+    const [error, setError] = useState("");
+
     const [inputValues, setInputValues] = useState<FormValues>({
         name: '',
         email: '',
         password: ''
     })
 
-    const handleInputChange = ( e: ChangeEvent<HTMLInputElement> ) => {
-        const  {name, value} = e.target
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target
         setInputValues({
             ...inputValues,
             [name]: value
         })
     }
- 
-    const handleSignUp = async  () => {
-           try {
+
+    const handleSignUp = async () => {
+        setError("");
+        const { name, email, password } = inputValues;
+        if (name.trim() === "" || email.trim() === "" || password.trim() === "") {
+            setError("Complete form")
+            return;
+        }
+        try {
             const response = await Axios.post(`/auth/signup`, inputValues);
             const user: User = response.data;
 
-            if(user && user.token) {
+            if (user && user.token) {
                 setUser(user);
                 const room = await getUserHomeRoom(user.data.id)
                 navigate(`/${room.id}`)
-            }else{
+            } else {
                 console.log("Something went wrong");
             }
-           } catch (error) {
+        } catch (error) {
             console.log(error);
-           }
+        }
     }
-  return (
-    <div>
-        <Navbar/>
-        <form action="">
-            
-        </form>
-        <br />
-        <input type='text' name='name' placeholder='Name' required
-         value={inputValues.name} onChange={handleInputChange}/>
-        <br />
-        <input type='email' name='email' placeholder='email' required
-         value={inputValues.email} onChange={handleInputChange}/>
-        <br />
-        <input type='password' name='password' placeholder='password'  required
-        value={inputValues.password} onChange={handleInputChange} />
-        <br />
-        <button onClick={handleSignUp}>Sign Up</button>
-    </div>
-  )
+    return (
+        <div>
+
+            <Navbar />
+            <div className='container auth-form'>
+                {error.trim() !== "" && <span className='error'>{error} </span>}
+
+                <label htmlFor="">Name</label>
+                <input type='text' name='name' placeholder='Name' required
+                    value={inputValues.name} onChange={handleInputChange} />
+                <label htmlFor="">Email</label>
+                <input type='email' name='email' placeholder='email' required
+                    value={inputValues.email} onChange={handleInputChange} />
+                <label htmlFor="">Password</label>
+                <input type='password' name='password' placeholder='password' required
+                    value={inputValues.password} onChange={handleInputChange} />
+                <button onClick={handleSignUp}>Sign In</button>
+            </div>
+        </div>
+
+
+
+    )
 }
 
 export default SignUp

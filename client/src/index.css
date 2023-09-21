@@ -1,15 +1,83 @@
-body{
+body, html{
     padding: 0;
     margin: 0;
 }
 
+.navbar{
+    height: 50px;
+}
+
+.navbar-content{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+
+}
+
+.container{
+    width: 80%;
+    margin: auto;
+}
+
+.hero {
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: 50px;
+}
+.navbar-buttons {
+    display: flex;
+    justify-content: space-between;
+    column-gap: 10px;
+    align-items: center;
+}
+
+.error {
+    color: red;
+}
+
+.link {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.link:hover{
+    color: gray;
+}
+
+.auth-form{
+    width: 450px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+}
+
+.room-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.room-item {
+    border: 1px solid gray;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.room-item:hover{
+    border: 1px solid dodgerblue;
+}
 .conference-room{
     background-color: rgb(18, 14, 43);
     height: 100vh;
     overflow: hidden;
     display: flex;
     flex-direction: row;
-    
 
 }
 

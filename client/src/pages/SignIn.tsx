@@ -15,7 +15,8 @@ interface FormValues {
   
 const SignIn = () => {
     const {setUser} = useContext(AuthContext);
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const [error, setError] = useState("");
     const [inputValues, setInputValues] = useState<FormValues>({
         email: '',
         password: ''
@@ -30,6 +31,13 @@ const SignIn = () => {
     }
  
     const handleSignIn = async  () => {
+            setError("");
+            const {email, password} = inputValues
+
+            if (email.trim() === "" || password.trim() === "") {
+                setError("Complete form")
+                return;
+            }
            try {
             const response = await Axios.post(`/auth/signin`, inputValues);
             const user: User = response.data;
@@ -40,6 +48,7 @@ const SignIn = () => {
                 navigate(`/${room.id}`)
             }else{
                 console.log("Something went wrong");
+                setError("Something went wrong")
             }
            } catch (error) {
             console.log(error);
@@ -48,17 +57,16 @@ const SignIn = () => {
   return (
     <div>
         <Navbar/>
-        <form action="">
-            
-        </form>
-        <br />
+        <div className='container auth-form'>
+            {error.trim() !== "" && <span className='error'>{error} </span>}
+        <label htmlFor="">Email</label>
         <input type='email' name='email' placeholder='email' required
          value={inputValues.email} onChange={handleInputChange}/>
-        <br />
+        <label htmlFor="">Password</label>
         <input type='password' name='password' placeholder='password'  required
         value={inputValues.password} onChange={handleInputChange} />
-        <br />
         <button onClick={handleSignIn}>Sign In</button>
+        </div>
     </div>
   )
 }

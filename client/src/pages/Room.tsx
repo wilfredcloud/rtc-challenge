@@ -111,17 +111,22 @@ const Room = () => {
   return (
     <div>
       <Navbar/>
+      <div className='container'>
       <h1>{room?.name}</h1>
-      <p>Invite participant</p>
+      <span>Invite participant</span>
+      <div >
       <input readOnly value={invitLink}/> <button onClick={handleCopy}>{isCopied ? 'Copied' : 'Copy'}</button>
-      <br />
 
-      <button onClick={isRoomInSession? joinMeeting : startMeeting}> {isRoomInSession? 'Join Meeting' : 'Start Meeting' }</button>
+<button onClick={isRoomInSession? joinMeeting : startMeeting}> {isRoomInSession? 'Join Meeting' : 'Start Meeting' }</button>
 
+      </div>
       <h5>Rooms</h5>
       <hr />
-      {userRooms.map((room) => <Link key={room.id} to={`/${room.id}`}><div>{room.name}</div></Link>)}
+      <div className='room-grid'>
+      {userRooms.map((room) => <Link className='room-item' key={room.id} to={`/${room.id}`}><div>{room.name}</div></Link>)}
+      </div>
           <button>Create a Room</button>
+      </div>
     </div>
   )
 }
