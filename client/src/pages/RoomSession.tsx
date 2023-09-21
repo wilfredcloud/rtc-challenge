@@ -73,6 +73,9 @@ const RoomSession = () => {
     }
 }
 
+const leaveRoom = () => {
+    navigate(`/${roomId}`);
+} 
  
 
   useEffect(() => {
@@ -133,6 +136,10 @@ const RoomSession = () => {
     ws.on(SE.roomSessionState, handleRoomSessionState)
     ws.emit(SE.isRoomInSession, {roomId})
 
+    return () => {
+      ws.off(SE.roomSessionState)
+    }
+
   }, [roomId, participantName ])
 
 
@@ -161,7 +168,7 @@ const RoomSession = () => {
           <button onClick={()=> {}}  className={`${!isMuted && 'active'}`}>Mic</button>
           <button onClick={shareCamera}  className={`${!isCameraOff && 'active'}`}>Camera</button>
           <button onClick={shareScreen} className={`${isScreenShared && 'active'}`}>Screen Sharing</button>
-          <button>Leave</button>
+          <button onClick={leaveRoom} className='leave'>Leave</button>
         </div>
 
       </div>

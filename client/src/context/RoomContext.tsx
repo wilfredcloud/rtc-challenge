@@ -66,6 +66,13 @@ const RoomProvider: React.FC<RoomProviderProps> = ({ children }) => {
         ws.on(SE.roomSessionStarted, enterRoomSession)
         ws.on(SE.roomSessionJoined, getParticipants)
         ws.on(SE.peerDisconnected, removePeer)
+
+        return () => {
+            ws.off(SE.roomSessionStarted)
+            ws.off(SE.roomSessionJoined)
+            ws.off(SE.peerDisconnected)
+            peer.disconnect();
+        }
     }, []);
 
 
