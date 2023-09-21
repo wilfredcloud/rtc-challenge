@@ -1,7 +1,7 @@
 import { Socket } from "socket.io";
 import { SOCKETEVENTS as SE } from "../utils/constants";
 import { createRoomSession } from "../services/SessionService";
-import { Participant } from "src/utils/types";
+import { Comment, Participant } from "src/utils/types";
 
 
 const activeRooms: Record<string, Participant[]> = {}
@@ -38,6 +38,7 @@ export const roomHandler = (socket: Socket) => {
       socket.to(roomId).emit(SE.peerJoined, { participant })
       socket.emit(SE.roomSessionJoined, { roomId, participants: activeRooms[roomId] })
       socket.on(SE.disconnect, () => {
+        
         leaveSession({ roomId, participant })
       })
 
@@ -49,7 +50,11 @@ export const roomHandler = (socket: Socket) => {
       socket.emit(SE.roomSessionState, {roomState})
   }
 
+  const sendMessage = ({name, message, roomId}: Comment) => { 
+      socket.to(roomId).emit(SE.messageSent, {name, message});
+  }
 
+  socket.on(SE.sendMessage, sendMessage)
   socket.on(SE.isRoomInSession, checkRoomInSession)
   socket.on(SE.startRoomSession, startSession)
   socket.on(SE.joinRoomSession, joinSession);

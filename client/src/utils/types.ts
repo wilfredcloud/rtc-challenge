@@ -23,4 +23,8 @@ export interface Participant {
     name: string;
     isRoomOwner?: boolean;
 }
+export interface Comment {
+    message: string
+    name: string;
+}
 

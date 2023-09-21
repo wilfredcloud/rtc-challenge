@@ -25,3 +25,9 @@ export interface Participant {
 }
 
 
+export interface Comment {
+    roomId: string
+    message: string
+    name: string;
+}
+

@@ -11,5 +11,7 @@ export const SOCKETEVENTS: Record<string, string> = {
     peerJoined: 'peer-joined',
     peerCall: 'peer-call',
     isRoomInSession: 'is-room-in-session',
-    roomSessionState: 'room-session-state'
+    roomSessionState: 'room-session-state',
+    sendMessage: 'send-message',
+    messageSent: 'message-sent',
 }

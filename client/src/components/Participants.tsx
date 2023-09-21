@@ -7,7 +7,7 @@ const Participants = () => {
     <div className="participants-section">
     <div className='section-title'>Participants</div>
     <div className='participants-list'>
-        {participants.map((pt) =><div className='participant'>
+        {participants.map((pt) =><div key={pt.peerId} className='participant'>
         { pt.name}
         </div>)}
     </div>
