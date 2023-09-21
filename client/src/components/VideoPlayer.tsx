@@ -19,11 +19,16 @@ const VideoPlayer:React.FC<{stream: MediaStream | null}> = ({stream}) => {
     }, [stream])
 
     if (!stream) {
-      return  <div>Participants</div>
+      return  <div className='participant-grid-item'>
+        <div className='participant-content'>
+          participannts
+        </div>
+      </div>
     }
   return (
-    <div className='video-item'>
-       <video className='video' ref={videoRef} autoPlay muted/>
+    <div className='participant-grid-item'>
+       <video className='participant-video' ref={videoRef} autoPlay muted/>
+       <div>Participant</div>
     </div>
   )
 }
