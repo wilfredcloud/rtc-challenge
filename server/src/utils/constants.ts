@@ -8,5 +8,7 @@ export const SOCKETEVENTS: Record<string, string> = {
     roomSessionStarted: 'room-session-started',
     joinRoomSession: 'join-room-session',
     roomSessionJoined: 'room-session-joined',
-    peerDisconnected: 'peer-disconnected'
+    peerDisconnected: 'peer-disconnected',
+    peerJoined: 'peer-joined',
+    peerCall: 'peer-call',
 }

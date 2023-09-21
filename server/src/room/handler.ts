@@ -12,36 +12,46 @@ interface PeerSessionData {
 export const roomHandler = (socket: Socket) => {
 
 
-    const startSession = async ({roomId}: {roomId: string}) => {
-      const session = await createRoomSession(roomId)
-      activeRooms[roomId] = [];
-      socket.emit(SE.roomSessionStarted, session)
-    }
+  const startSession = async ({ roomId }: { roomId: string }) => {
+    console.log("startSession")
+    const session = await createRoomSession(roomId)
+    activeRooms[roomId] = [];
+    console.log('roomSessionStarted')
+    socket.emit(SE.roomSessionStarted, session)
+  }
 
-    const leaveSession =  ({roomId, peerId}: PeerSessionData) => {
-      console.log("remove")
-      activeRooms[roomId] =  activeRooms[roomId].filter((id) => id !== peerId);
-      socket.emit(SE.peerDisconnected, {roomId, peerId})
-    }
+  const leaveSession = ({ roomId, peerId }: PeerSessionData) => {
+    console.log("leaveSession")
 
-    const joinSession = async ({roomId, peerId}: PeerSessionData) => {
+    activeRooms[roomId] = activeRooms[roomId].filter((id) => id !== peerId);
+    console.log("Emit, peerDisconnected")
+    socket.emit(SE.peerDisconnected, { roomId, peerId })
+  }
 
-     if(activeRooms[roomId]){
-      console.log("join sseeson",roomId, peerId)
-      activeRooms[roomId].push(peerId);
+  const joinSession = async ({ roomId, peerId }: PeerSessionData) => {
+    if (activeRooms[roomId]) {
+
+      if (!activeRooms[roomId].find((id) => id === peerId)) {
+        activeRooms[roomId].push(peerId);
+      };
       socket.join(roomId);
-      socket.to(roomId).emit(SE.peerJoined, {peerId})
-      socket.emit(SE.roomSessionJoined, {roomId, participants: activeRooms[roomId]} )
+      console.log("join")
+      // socket.on("ready", () => {
+      //   console.log("just got ready");
+      //   socket.to(roomId).emit(SE.peerJoined, { peerId })
+      // })
+      socket.to(roomId).emit(SE.peerJoined, { peerId })
+      socket.emit(SE.roomSessionJoined, { roomId, participants: activeRooms[roomId] })
       socket.on(SE.disconnect, () => {
-        leaveSession({roomId, peerId})
-       } )
-  
-     }
-    }
+        leaveSession({ roomId, peerId })
+      })
 
-   
-    
-    socket.on(SE.startRoomSession,  startSession)
-    socket.on(SE.joinRoomSession, joinSession);
+    }
+  }
+
+
+
+  socket.on(SE.startRoomSession, startSession)
+  socket.on(SE.joinRoomSession, joinSession);
 
 }
