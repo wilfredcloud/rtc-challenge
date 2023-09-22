@@ -26,18 +26,18 @@ const RoomSession = () => {
 
 
 
-    const sharNewStreamWithPeers = (newStream: MediaStream) => {
-      if (!userPeer) return;
-      setStream(newStream);
-      Object.keys(peers as PeerState).forEach((peerId) => {
-        const call = userPeer.call(peerId, newStream);
-        
-        call.on('stream', (remoteScreenStream) => {
-          // Handle remote screen sharing streams if needed
-        });
+  const sharNewStreamWithPeers = (newStream: MediaStream) => {
+    if (!userPeer) return;
+    setStream(newStream);
+    Object.keys(peers as PeerState).forEach((peerId) => {
+      const call = userPeer.call(peerId, newStream);
+
+      call.on('stream', (remotePeerStream) => {
+
       });
-    };
-  
+    });
+  };
+
 
   const muteMic = () => {
     navigator.mediaDevices.getUserMedia({ video: isCameraOn, audio: false })
@@ -68,7 +68,7 @@ const RoomSession = () => {
 
   const turnOnScreen = () => {
     navigator.mediaDevices.getDisplayMedia({}).
-    then(sharNewStreamWithPeers).catch((error) => console.log(error))
+      then(sharNewStreamWithPeers).catch((error) => console.log(error))
     setIsCameraOn(false);
     setIsScreenShareOn(true);
   }
@@ -77,21 +77,21 @@ const RoomSession = () => {
     navigator.mediaDevices.getUserMedia({ video: isCameraOn, audio: isMicOn })
       .then(sharNewStreamWithPeers)
       .catch((error) => console.log(error));
-      setIsScreenShareOn(false);
+    setIsScreenShareOn(false);
   }
 
-  
 
-  const handleRoomSessionState = ({roomState}: {roomState:boolean}) => { 
-    if (!roomState)  {
+
+  const handleRoomSessionState = ({ roomState }: { roomState: boolean }) => {
+    if (!roomState) {
       window.location.replace(`/${roomId}?session=false`);
     }
-}
+  }
 
-const leaveRoom = () => {
+  const leaveRoom = () => {
     window.location.replace(`/${roomId}`)
-} 
- 
+  }
+
 
   useEffect(() => {
 
@@ -129,7 +129,7 @@ const leaveRoom = () => {
   }, [userPeer, stream])
 
 
-  useEffect (() => {
+  useEffect(() => {
 
     const getRoom = async () => {
       try {
@@ -139,26 +139,26 @@ const leaveRoom = () => {
       } catch (error) {
         navigate(`/${roomId}`);
       }
-      
+
     }
 
-    if (!participantName ) {
+    if (!participantName) {
       navigate(`/${roomId}`);
       return;
     }
-    
+
     getRoom();
     ws.on(SE.roomSessionState, handleRoomSessionState)
-    ws.emit(SE.isRoomInSession, {roomId})
+    ws.emit(SE.isRoomInSession, { roomId })
 
     return () => {
       ws.off(SE.roomSessionState)
     }
 
-  }, [roomId, participantName ])
+  }, [roomId, participantName])
 
 
-  
+
 
 
   return (
@@ -180,8 +180,8 @@ const leaveRoom = () => {
 
         {/* controls panel */}
         <div className='controls'>
-          <button onClick={isMicOn? muteMic : unmuteMic}  className={`${isMicOn && 'active'}`}>Mic</button>
-          <button onClick={isCameraOn ? turnOffCamera : turnOnCamera}  className={`${isCameraOn && 'active'}`}>Camera</button>
+          <button onClick={isMicOn ? muteMic : unmuteMic} className={`${isMicOn && 'active'}`}>Mic</button>
+          <button onClick={isCameraOn ? turnOffCamera : turnOnCamera} className={`${isCameraOn && 'active'}`}>Camera</button>
           <button onClick={isScreenShareOn ? turnOffScreen : turnOnScreen} className={`${isScreenShareOn && 'active'}`}>Screen Sharing</button>
           <button onClick={leaveRoom} className='leave'>Leave</button>
         </div>

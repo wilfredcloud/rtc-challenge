@@ -49,12 +49,11 @@ const RoomProvider: React.FC<RoomProviderProps> = ({ children }) => {
         navigate(`/${session.roomId}/join?session=${session.id}`);
     }
     const getParticipants = ({ roomId, participants }: { roomId: string, participants: Participant[] }) => {
-       console.log("participants",participants)
        setParticipants(participants);
     }
     const removePeer = ({participant}: {participant: Participant}) => {
-        console.log("removed");
         dispatchPeers(removePeerAction(participant.peerId))
+        setParticipants((prevParticipants) => prevParticipants.filter((pt) =>  pt.peerId !== participant.peerId ));
     }
 
 
