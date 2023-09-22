@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { ChangeEvent, useContext, useState } from 'react'
 import { RoomContext } from '../context/RoomContext'
 import { AuthContext } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
@@ -9,6 +9,22 @@ const Home = () => {
   const { user } = useContext(AuthContext);
   const { ws } = useContext(RoomContext);
   const navigate = useNavigate()
+  const [inviteLink, setInviteLink] = useState("");
+  const [error, setError] = useState(false);
+
+  const handleChangeInviteLink = (e: ChangeEvent<HTMLInputElement>) => {
+      setError(false)
+      setInviteLink(e.target.value);
+  }
+
+  const openRoom  = () => {
+    if (inviteLink.trim() === "") {
+      setError(true)
+      return;
+    }
+    window.location.assign(inviteLink)
+  }
+
   const createMeeting = async () => {
     if (!user) {
       navigate("/signin");
@@ -27,7 +43,9 @@ const Home = () => {
       <div className='container hero'>
         <h1>Welcome to ZarTech Video Conferencings</h1>
 
-        <div className=''><button onClick={createMeeting}>Start a meeting</button> <input placeholder='Enter meeting link' /> <button>Join </button></div>
+        <div className=''><button onClick={createMeeting}>Start a meeting</button> 
+        <input placeholder='Enter meeting link' value={inviteLink} className={error ? 'input-error' : ''}  onChange={handleChangeInviteLink}  />
+         <button onClick={openRoom}>Join </button></div>
       </div>
     </div>
   )

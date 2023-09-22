@@ -1,6 +1,6 @@
 import { Router } from "express";
 import Joi from "joi";
-import { createRoom, getRoomById, getUserHomeRoom, getUserRooms } from "../services/RoomService";
+import { createRoom, getRoomById, getUserByRoomId, getUserHomeRoom, getUserRooms } from "../services/RoomService";
 
 const roomRoutes = Router();
 
@@ -24,7 +24,6 @@ roomRoutes.post('/', async (req, res, _next) => {
     }
 })
 
-
 roomRoutes.get(`/:roomId`,  async (req, res, _next) => {
     try {
         const roomId = req.params.roomId;
@@ -34,6 +33,17 @@ roomRoutes.get(`/:roomId`,  async (req, res, _next) => {
         throw error;
     }
 })
+
+roomRoutes.get(`/:roomId/owner`,  async (req, res, _next) => {
+    try {
+        const roomId = req.params.roomId;
+        const user = await getUserByRoomId(roomId)
+        return res.status(200).send(user);
+    } catch (error) {
+        throw error;
+    }
+})
+
 roomRoutes.get(`/user/:userId`,  async (req, res, _next) => {
     try {
         const userId = req.params.userId;

@@ -18,70 +18,85 @@ const RoomSession = () => {
   const { ws, userPeer, stream, peers, participants, setStream, dispatchPeers } = useContext(RoomContext);
   const { roomId } = useParams()
   const navigate = useNavigate()
-  const [isScreenShared, setIsScreenShared] = useState(false);
-  const [isCameraOff, setIsCameraOff] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
+  const [isScreenShareOn, setIsScreenShareOn] = useState(false);
+  const [isCameraOn, setIsCameraOn] = useState(true);
+  const [isMicOn, setIsMicOn] = useState(true);
   const [room, setRoom] = useState<RoomValue>()
   const participantName = localStorage.getItem("participantName");
 
 
 
-  const switchStream = (newStream: MediaStream) => {
-    if (!userPeer) return;
-  
-    // Find the video track from the new stream
-    const videoTrack = newStream.getTracks().find((track) => track.kind === 'video');
-  
-    if (!videoTrack) {
-      console.error('No video track found in the new stream');
-      return;
-    }
-    // Iterate through connections and replace the video track
-    Object.values(userPeer.connections).forEach((connections) => {
-      connections.forEach((connection:any) => {
-        const senders = connection.peerConnection.getSenders();
-        const videoSender = senders.find((sender:any) => sender.track && sender.track.kind === 'video');
-  
-        if (videoSender) {
-          videoSender.replaceTrack(videoTrack).catch((error:any) => console.error(error));
-        }
+    const sharNewStreamWithPeers = (newStream: MediaStream) => {
+      if (!userPeer) return;
+      setStream(newStream);
+      Object.keys(peers as PeerState).forEach((peerId) => {
+        const call = userPeer.call(peerId, newStream);
+        
+        call.on('stream', (remoteScreenStream) => {
+          // Handle remote screen sharing streams if needed
+        });
       });
-    });
-  
-    // Update the local stream state with the new stream
-    setStream(newStream);
-  };
+    };
   
 
-  const shareCamera = () => {
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-      .then(switchStream)
+  const muteMic = () => {
+    navigator.mediaDevices.getUserMedia({ video: isCameraOn, audio: false })
+      .then(sharNewStreamWithPeers)
       .catch((error) => console.log(error));
-    setIsCameraOff(false);
-    setIsScreenShared(false);
+    setIsMicOn(false);
+  }
+  const unmuteMic = () => {
+    navigator.mediaDevices.getUserMedia({ video: isCameraOn, audio: true })
+      .then(sharNewStreamWithPeers)
+      .catch((error) => console.log(error));
+    setIsMicOn(true);
   }
 
-  const shareScreen = () => {
-    navigator.mediaDevices.getDisplayMedia({}).then(switchStream).catch((error) => console.log(error))
-    setIsCameraOff(true);
-    setIsScreenShared(true);
+  const turnOnCamera = () => {
+    navigator.mediaDevices.getUserMedia({ video: true, audio: isMicOn })
+      .then(sharNewStreamWithPeers)
+      .catch((error) => console.log(error));
+    setIsCameraOn(true);
+    setIsScreenShareOn(false);
   }
+  const turnOffCamera = () => {
+    navigator.mediaDevices.getUserMedia({ video: false, audio: isMicOn })
+      .then(sharNewStreamWithPeers)
+      .catch((error) => console.log(error));
+    setIsCameraOn(false);
+  }
+
+  const turnOnScreen = () => {
+    navigator.mediaDevices.getDisplayMedia({}).
+    then(sharNewStreamWithPeers).catch((error) => console.log(error))
+    setIsCameraOn(false);
+    setIsScreenShareOn(true);
+  }
+
+  const turnOffScreen = () => {
+    navigator.mediaDevices.getUserMedia({ video: isCameraOn, audio: isMicOn })
+      .then(sharNewStreamWithPeers)
+      .catch((error) => console.log(error));
+      setIsScreenShareOn(false);
+  }
+
+  
 
   const handleRoomSessionState = ({roomState}: {roomState:boolean}) => { 
     if (!roomState)  {
-      navigate(`/${roomId}`);
+      window.location.replace(`/${roomId}?session=false`);
     }
 }
 
 const leaveRoom = () => {
-    navigate(`/${roomId}`);
+    window.location.replace(`/${roomId}`)
 } 
  
 
   useEffect(() => {
 
     if (!userPeer || !stream) {
-      navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+      navigator.mediaDevices.getUserMedia({ video: isCameraOn, audio: isMicOn })
         .then((stream) => setStream(stream))
         .catch((error) => console.log("error"))
 
@@ -165,9 +180,9 @@ const leaveRoom = () => {
 
         {/* controls panel */}
         <div className='controls'>
-          <button onClick={()=> {}}  className={`${!isMuted && 'active'}`}>Mic</button>
-          <button onClick={shareCamera}  className={`${!isCameraOff && 'active'}`}>Camera</button>
-          <button onClick={shareScreen} className={`${isScreenShared && 'active'}`}>Screen Sharing</button>
+          <button onClick={isMicOn? muteMic : unmuteMic}  className={`${isMicOn && 'active'}`}>Mic</button>
+          <button onClick={isCameraOn ? turnOffCamera : turnOnCamera}  className={`${isCameraOn && 'active'}`}>Camera</button>
+          <button onClick={isScreenShareOn ? turnOffScreen : turnOnScreen} className={`${isScreenShareOn && 'active'}`}>Screen Sharing</button>
           <button onClick={leaveRoom} className='leave'>Leave</button>
         </div>
 
