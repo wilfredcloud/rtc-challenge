@@ -41,11 +41,12 @@ const Home = () => {
     <div>
       <Navbar />
       <div className='container hero'>
-        <h1>Welcome to ZarTech Video Conferencings</h1>
+        <h1>Welcome to Zarttech Video Conferencing</h1>
+        <p>The conferencing platform you've been waiting for</p>
 
         <div className=''><button onClick={createMeeting}>Start a meeting</button> 
         <input placeholder='Enter meeting link' value={inviteLink} className={error ? 'input-error' : ''}  onChange={handleChangeInviteLink}  />
-         <button onClick={openRoom}>Join </button></div>
+         <button onClick={openRoom}>Join Meeting </button></div>
       </div>
     </div>
   )

@@ -49,10 +49,10 @@ const SignUp = () => {
                 const room = await getUserHomeRoom(user.data.id)
                 navigate(`/${room.id}`)
             } else {
-                console.log("Something went wrong");
+                setError("Email has been taken");
             }
         } catch (error) {
-            console.log(error);
+            setError("Something went wrong");
         }
     }
     return (

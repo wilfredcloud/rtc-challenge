@@ -12,6 +12,16 @@ export const signUp = async (data: SignUpData): Promise<User | null> => {
         const db = DataProvider.getDatabaseInstance()
         const { name, email, password } = data;
 
+        const foundUser = await db.user.findFirst({
+            where: {
+                email: email
+            }
+        });
+
+        if (foundUser) {
+           return null;
+        }
+
         const hashPassword = await bcrypt.hash(password, 12);
 
         const user = await db.user.create({
@@ -37,7 +47,7 @@ export const signUp = async (data: SignUpData): Promise<User | null> => {
         }
     } catch (error) {
         console.log("signUp", error)
-        throw error
+        return null;
     }
 }
 
