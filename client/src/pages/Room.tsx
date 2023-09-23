@@ -23,7 +23,7 @@ const Room = () => {
   const invitLink = `${baseUrl}/${room?.id}`;
   const navigate = useNavigate();
   const [searchParams] = useSearchParams()
-  const [inviteeName, setInviteeName] = useState(user?.data.name || "")
+  const [inviteeName, setInviteeName] = useState(user?.data.name || localStorage.getItem("participantName") || "")
   const [roomUserName, setRoomUserName] = useState("");
   const [joinInputError, setJoinInputError] = useState(false);
 

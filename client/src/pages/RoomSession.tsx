@@ -32,7 +32,7 @@ const RoomSession = () => {
     if (!userPeer) return;
     setStream(newStream);
     Object.keys(peers as PeerState).forEach((peerId) => {
-       userPeer.call(peerId, newStream);
+       userPeer.call(peerId, newStream, {metadata: participant});
     });
   };
 
@@ -87,7 +87,6 @@ const RoomSession = () => {
   }
 
   const leaveRoom = () => {
-    localStorage.removeItem("participantName");
     window.location.replace(`/${roomId}`)
   }
 
@@ -161,9 +160,6 @@ const RoomSession = () => {
     })
 
   }, [userPeer, stream])
-
-
-
 
 
 

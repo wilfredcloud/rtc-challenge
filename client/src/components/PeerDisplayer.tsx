@@ -1,6 +1,7 @@
 import React, {useContext, useEffect, useRef } from 'react'
 import { Participant } from '../utils/types';
 import { RoomContext } from '../context/RoomContext';
+import { hasVideoTracks } from '../utils/helpers';
 
 interface PeerDisplayerProps {
   stream: MediaStream | null,
@@ -18,7 +19,7 @@ const PeerDisplayer: React.FC<PeerDisplayerProps> = ({stream, metadata}) => {
         } 
 
     }, [stream])
-
+   
     if (!stream) {
       return  <div className='participant-grid-item'>
         <div className='participant-content'>
