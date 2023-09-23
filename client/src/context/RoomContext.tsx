@@ -10,15 +10,22 @@ import { PeerAction, PeerState, peersReducer } from "../reducers/peerReducer";
 import { addPeerAction, removePeerAction } from "../reducers/peerActions";
 
 interface RoomContextValue {
-    ws: Socket,
-    userPeer: Peer | null,
-    stream: MediaStream | null,
-    peers: PeerState,
-    participants: Participant[]
+    ws: Socket;
+    userPeer: Peer | null;
+    stream: MediaStream | null;
+    peers: PeerState;
+    participants: Participant[];
+    isMicOn: boolean;
+    isCameraOn: boolean;
+    isScreenShareOn: boolean;
     setUserPeer: React.Dispatch<React.SetStateAction<Peer | null>>;
     setStream: React.Dispatch<React.SetStateAction<MediaStream | null>>;
     setParticipants: React.Dispatch<React.SetStateAction<Participant[]>>;
-    dispatchPeers: React.Dispatch<PeerAction>
+    dispatchPeers: React.Dispatch<PeerAction>;
+    setIsScreenShareOn: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsCameraOn: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsMicOn: React.Dispatch<React.SetStateAction<boolean>>;
+
 }
 const ws: Socket = socketIOClient(SERVER_BASE_URL)
 
@@ -28,10 +35,16 @@ export const RoomContext = createContext<RoomContextValue>({
     stream: null,
     peers: {},
     participants: [],
+    isMicOn: true,
+    isCameraOn: true,
+    isScreenShareOn: false,
     setUserPeer: () => { },
     setStream: () => { },
     setParticipants: () => { },
-    dispatchPeers: () => {}
+    dispatchPeers: () => {},
+    setIsCameraOn: () => {},
+    setIsScreenShareOn: () => {},
+    setIsMicOn: () => {},
 });
 
 
@@ -45,6 +58,10 @@ const RoomProvider: React.FC<RoomProviderProps> = ({ children }) => {
     const [stream, setStream] = useState<MediaStream | null>(null)
     const [peers, dispatchPeers] = useReducer(peersReducer, {})
     const [participants, setParticipants] = useState<Participant[]>([])
+    const [isScreenShareOn, setIsScreenShareOn] = useState(false);
+    const [isCameraOn, setIsCameraOn] = useState(true);
+    const [isMicOn, setIsMicOn] = useState(true);
+
     const enterRoomSession = (session: Session) => {
         navigate(`/${session.roomId}/join?session=${session.id}`);
     }
@@ -75,7 +92,11 @@ const RoomProvider: React.FC<RoomProviderProps> = ({ children }) => {
     }, []);
 
 
-    return <RoomContext.Provider value={{ ws, userPeer, stream, peers,participants, setParticipants, setUserPeer, setStream, dispatchPeers }}>
+    return <RoomContext.Provider value={{ 
+        ws, userPeer, stream, peers, participants,
+        isCameraOn, isMicOn, isScreenShareOn, 
+        setParticipants, setUserPeer, setStream, dispatchPeers,
+        setIsCameraOn, setIsMicOn, setIsScreenShareOn}}>
         {children}
     </RoomContext.Provider>
 }

@@ -10,29 +10,29 @@ import Participants from '../components/Participants';
 import Comments from '../components/Comments';
 import { Room as RoomValue } from '../utils/types';
 import { Participant } from '../utils/types';
-import { getRoomById, hasVideoDevice, setupMediaConstraint } from '../utils/helpers';
+import { filterMediaTracks, getRoomById, hasVideoDevice, setupMediaConstraint } from '../utils/helpers';
 
 const RoomSession = () => {
   const { user, } = useContext(AuthContext);
-  const { ws, userPeer, stream, peers, setStream, dispatchPeers } = useContext(RoomContext);
+  const { ws, userPeer, stream, peers, isCameraOn,
+    isMicOn, isScreenShareOn, setStream, dispatchPeers,
+    setIsCameraOn, setIsMicOn, setIsScreenShareOn } = useContext(RoomContext);
   const { roomId } = useParams()
   const navigate = useNavigate()
-  const [isScreenShareOn, setIsScreenShareOn] = useState(false);
-  const [isCameraOn, setIsCameraOn] = useState(true);
-  const [isMicOn, setIsMicOn] = useState(true);
   const [room, setRoom] = useState<RoomValue>()
   const participantName = localStorage.getItem("participantName");
   const [hasCamera, setHasCamera] = useState(false);
-  const [roomSessionError, setRoomSessionError] = useState("");
+  const [roomSessionError, setRoomSessionError] = useState<string | null>(null);
   const [participant, setParticipant] = useState<Participant>();
 
 
 
   const shareNewStreamWithPeers = (newStream: MediaStream) => {
     if (!userPeer) return;
-    setStream(newStream);
+    // setStream(newStream);
     Object.keys(peers as PeerState).forEach((peerId) => {
-       userPeer.call(peerId, newStream, {metadata: participant});
+      userPeer.call(peerId, newStream, { metadata: participant });
+      console.log("I sent stream");
     });
   };
 
@@ -43,42 +43,61 @@ const RoomSession = () => {
         stream.getAudioTracks().forEach(track => {
           track.enabled = !isMicOn;
         });
-      setIsMicOn(!isMicOn);
-      shareNewStreamWithPeers(stream)
+        setIsMicOn(!isMicOn);
+        shareNewStreamWithPeers(stream)
       }
       return stream
     });
   }
 
- const toggleCamera = () => {
-  setStream((stream) => {
-    if (stream) {
-      stream.getVideoTracks().forEach(track => {
-        track.enabled = !isCameraOn;
+  const toggleCamera = () => {
+    if (isScreenShareOn) {
+      toggleScreenShare();
+    } else {
+      setStream((stream) => {
+        if (stream) {
+          stream.getVideoTracks().forEach(track => {
+            track.enabled = !isCameraOn;
+          });
+          setIsCameraOn(!isCameraOn);
+          shareNewStreamWithPeers(stream)
+        }
+        return stream
       });
-    setIsCameraOn(!isCameraOn);
-    shareNewStreamWithPeers(stream)
     }
-    return stream
-  });
-}
-
-
-  const turnOnScreen = () => {
-    navigator.mediaDevices.getDisplayMedia({}).
-      then(shareNewStreamWithPeers).catch((error) => console.log(error))
-    setIsCameraOn(false);
-    setIsScreenShareOn(true);
   }
 
-  const turnOffScreen = () => {
-    navigator.mediaDevices.getUserMedia({ video: isCameraOn, audio: isMicOn })
-      .then(shareNewStreamWithPeers)
-      .catch((error) => console.log(error));
-    setIsScreenShareOn(false);
+  const toggleScreenShare = async () => {
+    let newStream: MediaStream;
+    try {
+      if (isScreenShareOn) {
+        const mediaConstraint = await setupMediaConstraint({ video: isCameraOn, audio: isMicOn });
+        if (!isCameraOn && !isMicOn) {
+          newStream = await navigator.mediaDevices.getUserMedia({audio:true})
+          newStream = filterMediaTracks(newStream, isCameraOn, isMicOn )
+        }else {
+          newStream = await navigator.mediaDevices.getUserMedia(mediaConstraint)
+        }
+      } else {
+        newStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: isMicOn })
+      }
+      // stop tracks of current stream
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
+      setIsScreenShareOn(!isScreenShareOn);
+      setStream(newStream)
+      shareNewStreamWithPeers(newStream)
+    } catch (error) {
+      console.log(error);
+    }
+
   }
 
-
+  const returnToRoom = () => {
+    setRoomSessionError(null);
+    navigate(`/${roomId}`)
+  }
 
   const handleRoomSessionState = ({ roomState }: { roomState: boolean }) => {
     if (!roomState) {
@@ -121,17 +140,17 @@ const RoomSession = () => {
   useEffect(() => {
     const getMediaStream = async () => {
       try {
-        const constraint = await setupMediaConstraint({audio: isMicOn, video: isCameraOn});
+        const constraint = await setupMediaConstraint({ audio: isMicOn, video: isCameraOn });
         const stream = await navigator.mediaDevices.getUserMedia(constraint);
         setStream(stream)
         const hasCamera = await hasVideoDevice()
         setHasCamera(hasCamera);
       } catch (error) {
-        setRoomSessionError("Your Device is not supported")
+        setRoomSessionError("Grant permission to audio")
       }
     }
     if (!userPeer || !stream) {
-        getMediaStream();
+      getMediaStream();
     }
 
     if (!userPeer || !stream) return;
@@ -146,7 +165,7 @@ const RoomSession = () => {
     ws.emit(SE.joinRoomSession, { roomId, participant: participant })
 
     ws.on(SE.peerJoined, ({ participant: peer }) => {
-      const call = userPeer.call(peer.peerId, stream, {metadata: participant});
+      const call = userPeer.call(peer.peerId, stream, { metadata: participant });
       call.on("stream", (peerStream) => {
         dispatchPeers(addPeerAction(peer.peerId, peerStream, peer))
       })
@@ -159,16 +178,20 @@ const RoomSession = () => {
       })
     })
 
+    userPeer.on("disconnected", () => {
+      userPeer.reconnect();
+    })
+
   }, [userPeer, stream])
 
 
 
-if (roomSessionError !== "") {
-  return <div>
-    <h3 className='error'>{roomSessionError}</h3>
-    <Link to={`/${roomId}`}><button>Return to Rome</button></Link>
-  </div>
-}
+  if (roomSessionError !== null) {
+    return <div>
+      <h3 className='error'>{roomSessionError}</h3>
+      <button onClick={returnToRoom}>Return to Rome</button>
+    </div>
+  }
 
   return (
     <div className='conference-room'>
@@ -182,7 +205,7 @@ if (roomSessionError !== "") {
         <div className="participant-grid">
           <PeerDisplayer stream={stream} metadata={participant} />
           {Object.values(peers as PeerState).map((peer, index) =>
-            <PeerDisplayer key={index} {...peer}/>
+            <PeerDisplayer key={index} {...peer} />
           )}
 
         </div>
@@ -190,8 +213,8 @@ if (roomSessionError !== "") {
         {/* controls panel */}
         <div className='controls'>
           <button onClick={toggleMic} className={`${isMicOn && 'active'}`}>Mic</button>
-          {hasCamera &&  <button onClick={toggleCamera} className={`${isCameraOn && 'active'}`}>Camera</button>}
-          <button onClick={isScreenShareOn ? turnOffScreen : turnOnScreen} className={`${isScreenShareOn && 'active'}`}>Screen Sharing</button>
+          {hasCamera && <button onClick={toggleCamera} className={`${isCameraOn && 'active'}`}>Camera</button>}
+          <button onClick={toggleScreenShare} className={`${isScreenShareOn && 'active'}`}>Screen Sharing</button>
           <button onClick={leaveRoom} className='leave'>Leave</button>
         </div>
 

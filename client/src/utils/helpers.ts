@@ -71,3 +71,16 @@ export const hasAudioTracks = (stream: MediaStream): boolean => {
     return stream.getAudioTracks.length > 0;
 }
 
+export const filterMediaTracks = (stream: MediaStream, isCameraOn: boolean, isMicOn: boolean): MediaStream => {
+    if (!isCameraOn){
+        stream.getVideoTracks().forEach(track => {
+            track.enabled = !isCameraOn;
+          });
+    }
+    if (!isMicOn) {
+        stream.getAudioTracks().forEach(track => {
+            track.enabled = !isMicOn;
+          });
+    }
+    return stream;
+}
