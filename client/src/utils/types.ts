@@ -28,3 +28,7 @@ export interface Comment {
     name: string;
 }
 
+export interface MediaConstraints {
+    audio: boolean;
+    video?: boolean;
+}

@@ -8,7 +8,7 @@ import { getRoomById, getUserRooms, } from '../utils/helpers';
 import Navbar from '../components/Navbar';
 import { RoomContext } from '../context/RoomContext';
 import { SOCKETEVENTS as SE } from '../utils/constants';
-import VideoPlayer from '../components/VideoPlayer';
+import VideoPlayer from '../components/PeerDisplayer';
 import PreviewVideoPlayer from '../components/PreviewVideoPlayer';
 import Peer from 'peerjs';
 

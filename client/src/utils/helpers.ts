@@ -1,5 +1,5 @@
 import Axios from "./Axios"
-import { Room } from "./types"
+import { MediaConstraints, Room } from "./types"
 
 export const getToken = async () => {
 
@@ -54,3 +54,23 @@ export const getUserByRoomId = async (roomId: string) => {
         throw error
     }
 }
+
+export const hasVideoDevice = async ():Promise<boolean> => {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    return devices.some(device => device.kind === 'videoinput');
+}
+
+export const setupMediaConstraint = async ({audio, video}: MediaConstraints): Promise<MediaConstraints> => {
+    const hasVideoCamera = await hasVideoDevice();
+    
+    const constraints: MediaConstraints = {
+      audio: audio, 
+    };
+  
+    if (hasVideoCamera) {
+      constraints.video = video; 
+    }
+    return constraints
+}
+
+
