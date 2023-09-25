@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState, } from 'react'
 import { AuthContext } from '../context/AuthContext'
 import { RoomContext } from '../context/RoomContext';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import {  useNavigate, useParams } from 'react-router-dom';
 import { SOCKETEVENTS as SE } from '../utils/constants';
 import PeerDisplayer from '../components/PeerDisplayer';
 import { PeerState, } from '../reducers/peerReducer';
