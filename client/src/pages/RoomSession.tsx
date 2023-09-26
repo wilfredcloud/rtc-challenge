@@ -25,6 +25,7 @@ const RoomSession = () => {
   const [hasCamera, setHasCamera] = useState(false);
   const [roomSessionError, setRoomSessionError] = useState<string | null>(null);
   const [participant, setParticipant] = useState<Participant>();
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
 
 
 
@@ -108,6 +109,14 @@ const RoomSession = () => {
     window.location.replace(`/${roomId}`)
   }
 
+  const handleOnline = () => {
+    setIsOnline(true);
+  };
+
+  const handleOffline = () => {
+    setIsOnline(false);
+  };
+
   useEffect(() => {
 
     if (!participantName) {
@@ -184,6 +193,15 @@ const RoomSession = () => {
   }, [userPeer, stream])
 
 
+  useEffect(() => {
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   if (roomSessionError !== null) {
     return <div>
@@ -200,7 +218,11 @@ const RoomSession = () => {
       <Comments />
       {/* Display */}
       <div className='room-display'>
-        <div className='room-title'>{room?.name}</div>
+        <div className='room-title'>{room?.name} <div>   {isOnline ? (
+        <p></p>
+      ) : (
+        <p className='error'>You are offline. Please check your internet connection.</p>
+      )}</div></div>
         <div className="participant-grid">
           <PeerDisplayer stream={stream} metadata={participant} />
           {Object.values(peers as PeerState).map((peer, index) =>
