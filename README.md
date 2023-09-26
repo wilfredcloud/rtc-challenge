@@ -85,3 +85,6 @@ This will start the React development server on port 3000
 ### Access the App in Your Browser:
 Starting the client app should automatically open the app on your browser, your can as well manually
 open `http://localhost:3000` on your browser to see the app running 
+
+
+### Video on how to use the App
