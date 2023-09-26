@@ -1,5 +1,6 @@
 import { Router } from "express";
 import Joi from "joi";
+
 import { createRoom, getRoomById, getUserByRoomId, getUserHomeRoom, getUserRooms } from "../services/RoomService";
 
 const roomRoutes = Router();

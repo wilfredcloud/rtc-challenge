@@ -1,4 +1,5 @@
 import { Socket } from "socket.io";
+
 import { SOCKETEVENTS as SE } from "../utils/constants";
 import { createRoomSession } from "../services/SessionService";
 import { Comment, Participant } from "src/utils/types";
@@ -35,24 +36,24 @@ export const roomHandler = (socket: Socket) => {
         activeRooms[roomId].push(participant);
       };
       socket.join(roomId);
-      socket.to(roomId).emit(SE.peerJoined,  {participant})
+      socket.to(roomId).emit(SE.peerJoined, { participant })
       socket.emit(SE.roomSessionJoined, { roomId, participants: activeRooms[roomId] })
       socket.to(roomId).emit(SE.roomSessionJoined, { roomId, participants: activeRooms[roomId] })
       socket.on(SE.disconnect, () => {
-        
+
         leaveSession({ roomId, participant })
       })
 
     }
   }
 
-  const checkRoomInSession = ({roomId}: {roomId: string}) => {
-      const roomState = Object.keys(activeRooms).includes(roomId);
-      socket.emit(SE.roomSessionState, {roomState})
+  const checkRoomInSession = ({ roomId }: { roomId: string }) => {
+    const roomState = Object.keys(activeRooms).includes(roomId);
+    socket.emit(SE.roomSessionState, { roomState })
   }
 
-  const sendMessage = ({name, message, roomId}: Comment) => { 
-      socket.to(roomId).emit(SE.messageSent, {name, message});
+  const sendMessage = ({ name, message, roomId }: Comment) => {
+    socket.to(roomId).emit(SE.messageSent, { name, message });
   }
 
   socket.on(SE.sendMessage, sendMessage);

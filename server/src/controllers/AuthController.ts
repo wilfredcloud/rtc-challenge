@@ -1,5 +1,6 @@
 import { Router } from "express";
 import Joi from "joi";
+
 import { signUp, signIn } from "../services/AuthService";
 
 const authRouter = Router()
@@ -12,16 +13,16 @@ authRouter.post('/signup', async (req, res) => {
         password: Joi.string().max(16).min(4)
     });
 
-    const {error, value} = signupSchema.validate(req.body);
+    const { error, value } = signupSchema.validate(req.body);
     if (error) {
         res.status(400).send(error.details);
-    }else{
-       try {
-        const result = await signUp(value);
-        res.send(result)
-       } catch (error) {
-        throw(error)
-       }
+    } else {
+        try {
+            const result = await signUp(value);
+            res.send(result)
+        } catch (error) {
+            throw (error)
+        }
     }
 
 })
@@ -33,17 +34,17 @@ authRouter.post("/signin", async (req, res) => {
         password: Joi.string().max(16).min(4)
     });
 
-    const {error, value} = signinSchema.validate(req.body);
+    const { error, value } = signinSchema.validate(req.body);
 
     if (error) {
         res.status(400).send(error.details);
-    }else{
-       try {
-        const result = await signIn(value);
-        res.send(result)
-       } catch (error) {
-        throw(error)
-       }
+    } else {
+        try {
+            const result = await signIn(value);
+            res.send(result)
+        } catch (error) {
+            throw (error)
+        }
     }
 })
 

@@ -1,4 +1,5 @@
 import Axios from "./Axios"
+
 import { MediaConstraints, Room } from "./types"
 
 
@@ -44,21 +45,21 @@ export const getUserByRoomId = async (roomId: string) => {
     }
 }
 
-export const hasVideoDevice = async ():Promise<boolean> => {
+export const hasVideoDevice = async (): Promise<boolean> => {
     const devices = await navigator.mediaDevices.enumerateDevices();
     return devices.some(device => device.kind === 'videoinput');
 }
 
-export const setupMediaConstraint = async ({audio, video}: MediaConstraints):
- Promise<MediaConstraints> => {
+export const setupMediaConstraint = async ({ audio, video }: MediaConstraints):
+    Promise<MediaConstraints> => {
     const hasVideoCamera = await hasVideoDevice();
-    
+
     const constraints: MediaConstraints = {
-      audio: audio, 
+        audio: audio,
     };
-  
+
     if (hasVideoCamera) {
-      constraints.video = video; 
+        constraints.video = video;
     }
     return constraints
 }
@@ -72,15 +73,15 @@ export const hasAudioTracks = (stream: MediaStream): boolean => {
 }
 
 export const filterMediaTracks = (stream: MediaStream, isCameraOn: boolean, isMicOn: boolean): MediaStream => {
-    if (!isCameraOn){
+    if (!isCameraOn) {
         stream.getVideoTracks().forEach(track => {
             track.enabled = !isCameraOn;
-          });
+        });
     }
     if (!isMicOn) {
         stream.getAudioTracks().forEach(track => {
             track.enabled = !isMicOn;
-          });
+        });
     }
     return stream;
 }

@@ -19,7 +19,7 @@ export const signUp = async (data: SignUpData): Promise<User | null> => {
         });
 
         if (foundUser) {
-           return null;
+            return null;
         }
 
         const hashPassword = await bcrypt.hash(password, 12);
