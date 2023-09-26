@@ -71,7 +71,7 @@ const SignUp = () => {
                 <label htmlFor="">Password</label>
                 <input type='password' name='password' placeholder='password' required
                     value={inputValues.password} onChange={handleInputChange} />
-                <button onClick={handleSignUp}>Sign In</button>
+                <button onClick={handleSignUp}>Sign Up</button>
             </div>
         </div>
 
