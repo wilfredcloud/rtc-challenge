@@ -1,5 +1,5 @@
 import { ChangeEvent, useContext, useState } from 'react'
-import { RoomContext } from '../context/RoomContext'
+
 import { AuthContext } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
@@ -7,7 +7,6 @@ import { getUserHomeRoom } from '../utils/helpers';
 
 const Home = () => {
   const { user } = useContext(AuthContext);
-  const { ws } = useContext(RoomContext);
   const navigate = useNavigate()
   const [inviteLink, setInviteLink] = useState("");
   const [error, setError] = useState(false);

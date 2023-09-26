@@ -7,7 +7,7 @@ import socketIOClient, { Socket } from "socket.io-client"
 import { SERVER_BASE_URL, SOCKETEVENTS as SE } from "../utils/constants";
 import { Participant, Session } from "../utils/types";
 import { PeerAction, PeerState, peersReducer } from "../reducers/peerReducer";
-import { addPeerAction, removePeerAction } from "../reducers/peerActions";
+import {removePeerAction } from "../reducers/peerActions";
 
 interface RoomContextValue {
     ws: Socket;
@@ -41,10 +41,10 @@ export const RoomContext = createContext<RoomContextValue>({
     setUserPeer: () => { },
     setStream: () => { },
     setParticipants: () => { },
-    dispatchPeers: () => {},
-    setIsCameraOn: () => {},
-    setIsScreenShareOn: () => {},
-    setIsMicOn: () => {},
+    dispatchPeers: () => { },
+    setIsCameraOn: () => { },
+    setIsScreenShareOn: () => { },
+    setIsMicOn: () => { },
 });
 
 
@@ -66,11 +66,11 @@ const RoomProvider: React.FC<RoomProviderProps> = ({ children }) => {
         navigate(`/${session.roomId}/join?session=${session.id}`);
     }
     const getParticipants = ({ roomId, participants }: { roomId: string, participants: Participant[] }) => {
-       setParticipants(participants);
+        setParticipants(participants);
     }
-    const removePeer = ({participant}: {participant: Participant}) => {
+    const removePeer = ({ participant }: { participant: Participant }) => {
         dispatchPeers(removePeerAction(participant.peerId))
-        setParticipants((prevParticipants) => prevParticipants.filter((pt) =>  pt.peerId !== participant.peerId ));
+        setParticipants((prevParticipants) => prevParticipants.filter((pt) => pt.peerId !== participant.peerId));
     }
 
 
@@ -92,11 +92,12 @@ const RoomProvider: React.FC<RoomProviderProps> = ({ children }) => {
     }, []);
 
 
-    return <RoomContext.Provider value={{ 
+    return <RoomContext.Provider value={{
         ws, userPeer, stream, peers, participants,
-        isCameraOn, isMicOn, isScreenShareOn, 
+        isCameraOn, isMicOn, isScreenShareOn,
         setParticipants, setUserPeer, setStream, dispatchPeers,
-        setIsCameraOn, setIsMicOn, setIsScreenShareOn}}>
+        setIsCameraOn, setIsMicOn, setIsScreenShareOn
+    }}>
         {children}
     </RoomContext.Provider>
 }

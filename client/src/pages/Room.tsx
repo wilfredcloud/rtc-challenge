@@ -7,8 +7,7 @@ import { getRoomById, getUserByRoomId, getUserRooms, } from '../utils/helpers';
 import Navbar from '../components/Navbar';
 import { RoomContext } from '../context/RoomContext';
 import { SOCKETEVENTS as SE } from '../utils/constants';
-import Peer from 'peerjs';
-import Participants from '../components/Participants';
+
 
 const Room = () => {
   const { user } = useContext(AuthContext);
@@ -41,7 +40,7 @@ const Room = () => {
         if (user) {
           const userRooms = await getUserRooms(user.data.id);
           setUserRooms(userRooms);
-        }else{
+        } else {
           const roomUser = await getUserByRoomId(roomId as string);
           setRoomUserName(roomUser.name);
         }
@@ -116,10 +115,10 @@ const Room = () => {
           <span>(Owner: {roomUserName})</span>
           <br />
           <br />
-          <input placeholder='Enter your name ' onChange={handleNameChange}  value={inviteeName}  
-          className={`${joinInputError ? 'input-error' : ''}`}/> 
+          <input placeholder='Enter your name ' onChange={handleNameChange} value={inviteeName}
+            className={`${joinInputError ? 'input-error' : ''}`} />
           <button onClick={joinMeeting}>Join</button>
-          <br/>
+          <br />
           {searchParams.get('session') === 'false' && <span className='error'>Meeting has not started</span>}
           <br />
         </div>

@@ -1,4 +1,5 @@
-import {createContext, ReactNode, useEffect, useState } from "react";
+import { createContext, ReactNode, useEffect, useState } from "react";
+
 import { User } from "../utils/types";
 
 
@@ -20,7 +21,7 @@ interface AuthProviderProps {
     children: ReactNode
 }
 
-const AuthProvider:React.FC<AuthProviderProps> = ({ children }) => {
+const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [user, setUser] = useState<User | null>(initialData);
 
     const contextValue: AuthContextValue = {
@@ -31,15 +32,15 @@ const AuthProvider:React.FC<AuthProviderProps> = ({ children }) => {
     useEffect(() => {
         if (user) {
             localStorage.setItem('rtc_user', JSON.stringify(user));
-        }else {
+        } else {
             localStorage.removeItem('rtc_user');
         }
-    },[user])
+    }, [user])
     return (
         <AuthContext.Provider value={contextValue}>
             {children}
         </AuthContext.Provider>
     )
 }
- 
+
 export default AuthProvider;

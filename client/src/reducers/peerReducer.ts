@@ -1,7 +1,7 @@
 import { Participant } from "../utils/types";
 import { ADD_PEER, REMOVE_PEER } from "./peerActions";
 
-export type PeerState = Record<string, { stream: MediaStream, metadata?:Participant }>;
+export type PeerState = Record<string, { stream: MediaStream, metadata?: Participant }>;
 export type PeerAction =
     {
         type: typeof ADD_PEER;
@@ -22,10 +22,10 @@ export const peersReducer = (state: PeerState, action: PeerAction) => {
                 }
             }
         case REMOVE_PEER:
-            const {[action.payload.peerId]: deleted, ...rest} = state
+            const { [action.payload.peerId]: deleted, ...rest } = state
             return rest;
-        
+
         default:
-            return {...state};
+            return { ...state };
     }
 }

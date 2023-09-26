@@ -1,7 +1,8 @@
 import { useContext, useEffect, useState, } from 'react'
+
 import { AuthContext } from '../context/AuthContext'
 import { RoomContext } from '../context/RoomContext';
-import {  useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { SOCKETEVENTS as SE } from '../utils/constants';
 import PeerDisplayer from '../components/PeerDisplayer';
 import { PeerState, } from '../reducers/peerReducer';
@@ -29,10 +30,8 @@ const RoomSession = () => {
 
   const shareNewStreamWithPeers = (newStream: MediaStream) => {
     if (!userPeer) return;
-    // setStream(newStream);
     Object.keys(peers as PeerState).forEach((peerId) => {
       userPeer.call(peerId, newStream, { metadata: participant });
-      console.log("I sent stream");
     });
   };
 
@@ -73,9 +72,9 @@ const RoomSession = () => {
       if (isScreenShareOn) {
         const mediaConstraint = await setupMediaConstraint({ video: isCameraOn, audio: isMicOn });
         if (!isCameraOn && !isMicOn) {
-          newStream = await navigator.mediaDevices.getUserMedia({audio:true})
-          newStream = filterMediaTracks(newStream, isCameraOn, isMicOn )
-        }else {
+          newStream = await navigator.mediaDevices.getUserMedia({ audio: true })
+          newStream = filterMediaTracks(newStream, isCameraOn, isMicOn)
+        } else {
           newStream = await navigator.mediaDevices.getUserMedia(mediaConstraint)
         }
       } else {
@@ -199,7 +198,7 @@ const RoomSession = () => {
       <Participants />
       {/* comment */}
       <Comments />
-      {/* conf bos */}
+      {/* Display */}
       <div className='room-display'>
         <div className='room-title'>{room?.name}</div>
         <div className="participant-grid">

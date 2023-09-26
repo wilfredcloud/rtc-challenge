@@ -12,18 +12,18 @@ const Navbar = () => {
     setUser(null);
     navigate("/");
   }
-    const openMyRooms = async () => {
-      if (!user) {
-        navigate("/signin");
-        return;
-      }
-      try {
-        const room = await getUserHomeRoom(user.data.id);
-        navigate(`/${room.id}`)
-      } catch (error) {
-        console.log('Error occured')
-      }
+  const openMyRooms = async () => {
+    if (!user) {
+      navigate("/signin");
+      return;
     }
+    try {
+      const room = await getUserHomeRoom(user.data.id);
+      navigate(`/${room.id}`)
+    } catch (error) {
+      console.log('Error occured')
+    }
+  }
 
 
   return (
@@ -35,14 +35,14 @@ const Navbar = () => {
 
         <div className='navbar-buttons'>
 
-        {!user && <> <Link to="/signin"><button>SignIn</button></Link>
-          <Link to="/signup"><button>Signup</button></Link>
-        </>}
+          {!user && <> <Link to="/signin"><button>SignIn</button></Link>
+            <Link to="/signup"><button>Signup</button></Link>
+          </>}
 
-        {user && <span>{user.data.name}</span>}
-        {user && <button onClick={handleLogout}>Logout</button>}
+          {user && <span>{user.data.name}</span>}
+          {user && <button onClick={handleLogout}>Logout</button>}
 
-        
+
         </div>
       </div>
     </nav>

@@ -1,4 +1,5 @@
-import React, { ChangeEvent, useContext, useEffect, useState } from 'react'
+import { ChangeEvent, useContext, useEffect, useState } from 'react'
+
 import { RoomContext } from '../context/RoomContext';
 import { SOCKETEVENTS as SE } from '../utils/constants';
 import { Comment } from '../utils/types';
@@ -19,22 +20,22 @@ const Comments = () => {
   const [message, setMessage] = useState("");
   const [comments, setComments] = useState<Comment[]>([])
   const name = localStorage.getItem("participantName") as string;
-  const {roomId} = useParams();
+  const { roomId } = useParams();
 
   const handleMessageChange = (e: ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value)
   }
 
-  const updateComments = ({name, message}: Comment) => {
-    setComments(prev => [...prev, {name, message}])
+  const updateComments = ({ name, message }: Comment) => {
+    setComments(prev => [...prev, { name, message }])
   }
 
   const sendMessage = () => {
     if (message.trim() === "") return;
-  
-    ws.emit(SE.sendMessage, {roomId, name, message})
 
-    setComments(prev => [...prev, {name, message}])
+    ws.emit(SE.sendMessage, { roomId, name, message })
+
+    setComments(prev => [...prev, { name, message }])
 
     setMessage("");
   }
