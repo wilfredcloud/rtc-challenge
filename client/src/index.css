@@ -87,7 +87,7 @@ h1{
 }
 
 .participants-section {
-    width: 200px;
+    width: 100px;
     background-color: #d6e5f1;
     padding: 10px;
 }
@@ -101,7 +101,7 @@ h1{
 }
 
 .comments-section {
-    width: 300px;
+    width: 250px;
     background-color: white;
     padding: 10px;
     display: flex;
