@@ -88,3 +88,6 @@ open `http://localhost:3000` on your browser to see the app running
 
 
 ### Video on how to use the App
+
+https://github.com/wilfredcloud/rtc-challenge/assets/111436934/6f8d65fd-c8af-4896-bbc0-c3ea08888a22
+
