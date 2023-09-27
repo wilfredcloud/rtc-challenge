@@ -220,3 +220,14 @@ h1{
 .input-error {
     border: 1px solid red;
 }
+
+@media (max-width: 600px) {
+    .comments-section  {
+      display: none;
+    }
+
+    .participants-section  {
+        font-size: 12px;
+        width: 70px;
+    }
+}
