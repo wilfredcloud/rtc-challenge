@@ -28,7 +28,7 @@ const PeerDisplayer: React.FC<PeerDisplayerProps> = ({ stream, metadata }) => {
   }
   return (
     <div className='participant-grid-item'>
-      <video className='participant-video' ref={videoRef} autoPlay />
+      <video className='participant-video' ref={videoRef} autoPlay muted={metadata?.peerId === userPeer?.id} />
       {`${metadata?.name || '...'} ${metadata?.peerId === userPeer?.id ? '(Me)' : ''} ${metadata?.isRoomOwner ? '[HOST]' : ''}`}
     </div>
   )
