@@ -5,9 +5,10 @@ import { RoomContext } from '../context/RoomContext';
 
 interface PeerDisplayerProps {
   stream: MediaStream | null,
-  metadata?: Participant
+  metadata?: Participant,
+  muted?: boolean
 }
-const PeerDisplayer: React.FC<PeerDisplayerProps> = ({ stream, metadata }) => {
+const PeerDisplayer: React.FC<PeerDisplayerProps> = ({ stream, metadata, muted=false }) => {
   const { userPeer } = useContext(RoomContext);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -28,7 +29,7 @@ const PeerDisplayer: React.FC<PeerDisplayerProps> = ({ stream, metadata }) => {
   }
   return (
     <div className='participant-grid-item'>
-      <video className='participant-video' ref={videoRef} autoPlay muted={metadata?.peerId === userPeer?.id} />
+      <video className='participant-video' ref={videoRef} autoPlay muted={muted} />
       {`${metadata?.name || '...'} ${metadata?.peerId === userPeer?.id ? '(Me)' : ''} ${metadata?.isRoomOwner ? '[HOST]' : ''}`}
     </div>
   )

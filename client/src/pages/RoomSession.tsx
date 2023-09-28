@@ -224,7 +224,7 @@ const RoomSession = () => {
         <p className='error'>You are offline. Please check your internet connection.</p>
       )}</div></div>
         <div className="participant-grid">
-          <PeerDisplayer stream={stream} metadata={participant} />
+          <PeerDisplayer stream={stream} metadata={participant} muted={true} />
           {Object.values(peers as PeerState).map((peer, index) =>
             <PeerDisplayer key={index} {...peer} />
           )}
@@ -235,7 +235,7 @@ const RoomSession = () => {
         <div className='controls'>
           <button onClick={toggleMic} className={`${isMicOn && 'active'}`}>Mic</button>
           {hasCamera && <button onClick={toggleCamera} className={`${isCameraOn && 'active'}`}>Camera</button>}
-          <button onClick={toggleScreenShare} className={`${isScreenShareOn && 'active'}`}>Screen Sharing</button>
+          {/* <button onClick={toggleScreenShare} className={`${isScreenShareOn && 'active'}`}>Screen Sharing</button> */}
           <button onClick={leaveRoom} className='leave'>Leave</button>
         </div>
 
